@@ -95,6 +95,16 @@ namespace PracticeQR
             }
             if(check==true)
             {
+                int HighID = 1;
+                for (int i = 0; i < Table.RowCount; i++)
+                {
+                    if (Convert.ToInt32(Table[0, i].Value) > HighID)
+                    {
+                        HighID = Convert.ToInt32(Table[0, i].Value);
+                    }
+                }
+                ID = HighID + 1;
+                if (Table.RowCount == 0) ID = 1;
                 Table.Rows.Add(ID,FIO1TXT.Text, FIO2TXT.Text, AdresTXT.Text, TemaTXT.Text, ContentTXT.Text,"","Создано","");
                 ShowHide("Add", false);
                 ID++;
