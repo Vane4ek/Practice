@@ -453,6 +453,7 @@
             this.Table.TabStop = false;
             this.Table.Tag = "Main";
             this.Table.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.Table_CellContentClick);
+            this.Table.SortCompare += new System.Windows.Forms.DataGridViewSortCompareEventHandler(this.Table_SortCompare);
             // 
             // column0
             // 

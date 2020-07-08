@@ -469,5 +469,17 @@ namespace PracticeQR
                 ID = HighID + 1;
             }
         }
+
+        private void Table_SortCompare(object sender, DataGridViewSortCompareEventArgs e)
+        {
+            var myColumn = 0;
+            if (e.Column.Index == myColumn)
+            {
+                var s1 = e.CellValue1.ToString();
+                var s2 = e.CellValue2.ToString();
+                e.SortResult = Convert.ToInt32(s1).CompareTo(Convert.ToInt32(s2));
+                e.Handled = true;
+            }
+        }
     }
 }
