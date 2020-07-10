@@ -95,16 +95,6 @@ namespace PracticeQR
             }
             if(check==true)
             {
-                int HighID = 1;
-                for (int i = 0; i < Table.RowCount; i++)
-                {
-                    if (Convert.ToInt32(Table[0, i].Value) > HighID)
-                    {
-                        HighID = Convert.ToInt32(Table[0, i].Value);
-                    }
-                }
-                ID = HighID + 1;
-                if (Table.RowCount == 0) ID = 1;
                 Table.Rows.Add(ID,FIO1TXT.Text, FIO2TXT.Text, AdresTXT.Text, TemaTXT.Text, ContentTXT.Text,"","Создано","");
                 ShowHide("Add", false);
                 ID++;
@@ -155,12 +145,10 @@ namespace PracticeQR
                 {
                     string decoded = result.ToString();
                     string[] data = { "", "", "", "", "", "", "", "", ""};
-                    char[] array = new char[decoded.Length];
-                    array = decoded.ToCharArray();
                     int j = 0;
                     for (int i = 0; i < decoded.Length; i++)
                     {
-                        if (array[i] == '$') j++;
+                        if (decoded[i] == '$') j++;
                     }
                     if (j != 9)
                     {
@@ -174,8 +162,8 @@ namespace PracticeQR
                         j = 0;
                         for (int i = 0; i < decoded.Length; i++)
                         {
-                            if (array[i] == '$') { j++; continue; }
-                            data[j] += array[i].ToString();
+                            if (decoded[i] == '$') { j++; continue; }
+                            data[j] += decoded[i].ToString();
                         }
                         string status = "";
                         switch (data[7])
@@ -201,6 +189,7 @@ namespace PracticeQR
                         {
                             if (!check1)
                             {
+                                if (Convert.ToInt32(data[0]) > ID) { ID = Convert.ToInt32(data[0]) + 1; }
                                 Table.Rows.Add(data[0], data[1], data[2], data[3], data[4], data[5], data[6], status, data[8]);
                                 MessageBox.Show("Обращение №" + data[0] + " считано.", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 ShowHide("Read", false);
@@ -292,8 +281,8 @@ namespace PracticeQR
                             Height = 2000,
                         };
 
-                        var qr = new ZXing.BarcodeWriter();
-                        qr.Format = ZXing.BarcodeFormat.QR_CODE;
+                        var qr = new BarcodeWriter();
+                        qr.Format = BarcodeFormat.QR_CODE;
                         qr.Options = options;
                         Bitmap codeqr = new Bitmap(qr.Write(register.Trim()), 1260, 1260);
 
@@ -310,7 +299,7 @@ namespace PracticeQR
 
                         SaveFileDialog save = new SaveFileDialog();
                         save.Filter = "PNG|*.png|JPEG|*.jpg";
-                        if (save.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        if (save.ShowDialog() == DialogResult.OK)
                         {
                             res.Save(save.FileName);
                         }
@@ -424,10 +413,11 @@ namespace PracticeQR
         { 
             SaveFileDialog save = new SaveFileDialog();
             save.Filter = "TXT|*.txt";
-            if (save.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (save.ShowDialog() == DialogResult.OK)
             {
                 string path = save.FileName;
                 StreamWriter writer = new StreamWriter(path);
+                writer.Write(ID.ToString() + "\n");
                 for (int i = 0; i < Table.Rows.Count; i++)
                 {
                     for (int j = 0; j < 9; j++)
@@ -445,11 +435,14 @@ namespace PracticeQR
         {
             OpenFileDialog open = new OpenFileDialog();
             open.Filter = "TXT|*.txt";
-            if (open.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (open.ShowDialog() == DialogResult.OK)
             {
                 Table.Rows.Clear();
                 string path = open.FileName;
+                int number;
                 StreamReader reader = new StreamReader(path);
+                Int32.TryParse(reader.ReadLine(), out number);
+                ID = number;
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -458,15 +451,6 @@ namespace PracticeQR
                     Table.Rows[index].SetValues(values);
                 }
                 reader.Close();
-                int HighID = 1;
-                for(int i = 0; i < Table.RowCount;i++)
-                {
-                    if(Convert.ToInt32(Table[0, i].Value) > HighID)
-                    {
-                        HighID = Convert.ToInt32(Table[0, i].Value);
-                    }
-                }
-                ID = HighID + 1;
             }
         }
 
